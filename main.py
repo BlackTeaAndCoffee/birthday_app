@@ -9,11 +9,15 @@ from kivy.lang import Builder
 from kivy.properties import Property, NumericProperty, AliasProperty, StringProperty
 from kivymd.uix.list import MDList
 from kivymd.theming import ThemableBehavior
+from kivy.properties import ObjectProperty
+from kivymd.uix.boxlayout import MDBoxLayout
+
 
 from kivy.uix.carousel import Carousel 
 
 from kivymd.uix.label import MDLabel, MDIcon
 
+#import multscreens as navdraw
 import navigation_drawer as navdraw
 
 import configparser 
@@ -28,7 +32,7 @@ cfg.read("Settings.cfg")
 
 ip_adress_api = cfg.get("adress", "ip_adress_api")
 graphql_port = cfg.get("ports", "graphql")
-screen_helper = navdraw.navigation_helper
+screen_helper = navdraw.KV
 #"""
 #   Screen:
 #       MDNavigationLayout:
@@ -78,9 +82,15 @@ listBirthdays {
 
 
 query = json.dumps({'query': qu1})
-r = requests.post(url = 'http://{}:{}/graphql'.format(ip_adress_api,graphql_port ), json={"operationName":"AllBirthdays","query":qu1, "variables":{}})
 
-birthdays = r.json()['data']['listBirthdays']['birthdays']
+try:
+    r = requests.post(url = 'http://{}:{}/graphql'.format(ip_adress_api,graphql_port ), json={"operationName":"AllBirthdays","query":qu1, "variables":{}})
+    birthdays = r.json()['data']['listBirthdays']['birthdays']
+except Exception as e:
+    print(e)
+    with open("birthdays.json") as infile:
+        r = json.load(infile)
+    birthdays = r['listBirthdays']['birthdays']
 
 class ScreenWidget(Screen):
     pass
@@ -103,17 +113,25 @@ class CarouselWidget(BoxLayout):
             carr.add_widget(box_iter)
         
         self.add_widget(carr)
+class ContentNavigationDrawer(MDBoxLayout):
+    screen_manager = ObjectProperty()
+    nav_drawer = ObjectProperty()
+
+class MainScreen(Screen):
+    pass
+
+class ListScreen(Screen):
+    pass
 
 class DemoApp(MDApp):
-
-    class ContentNavigationDrawer(BoxLayout):
-        pass
-    class DrawerList(ThemableBehavior, MDList):
-        pass
 
     def build(self):
         screen = Builder.load_string(screen_helper)
         return screen
+    def on_start(self):
+        for i in range(len(birthdays)):
+            self.root.ids.list_birthdays.add_widget(OneLineIconListItem(text =  birthdays[i]["name"] + ":" + birthdays[i]["birthday"]))
+
 
     def restart(self):
         print(self.root.ids.caro.children[0]._get_index())
