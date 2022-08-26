@@ -2,22 +2,19 @@ from kivymd.app import MDApp
 from kivymd.uix.screen import Screen
 from kivymd.uix.list import OneLineListItem, MDList, TwoLineListItem, ThreeLineListItem
 from kivymd.uix.list import OneLineIconListItem, IconLeftWidget
-from kivy.uix.scrollview import ScrollView
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.label import Label
+from kivymd.uix.scrollview import ScrollView
+from kivymd.uix.boxlayout import BoxLayout
 from kivy.lang import Builder 
-from kivy.properties import Property, NumericProperty, AliasProperty, StringProperty
+from kivy.properties import Property, NumericProperty, AliasProperty, StringProperty, ObjectProperty
 from kivymd.uix.list import MDList
 from kivymd.theming import ThemableBehavior
-from kivy.properties import ObjectProperty
 from kivymd.uix.boxlayout import MDBoxLayout
 
 
-from kivy.uix.carousel import Carousel 
+from kivymd.uix.carousel import Carousel 
 
 from kivymd.uix.label import MDLabel, MDIcon
 
-#import multscreens as navdraw
 import navigation_drawer as navdraw
 
 import configparser 
@@ -33,34 +30,6 @@ cfg.read("Settings.cfg")
 ip_adress_api = cfg.get("adress", "ip_adress_api")
 graphql_port = cfg.get("ports", "graphql")
 screen_helper = navdraw.KV
-#"""
-#   Screen:
-#       MDNavigationLayout:
-#           ScreenManager:
-#               Screen:
-#                   BoxLayout:
-#                       id: box
-#                       orientation : 'vertical'  
-#                       MDToolbar: 
-#                           title:"birthdays"
-#                           elevation:10
-#                       
-#                       CarouselWidget:
-#                           id: caro
-#                       MDBottomAppBar:
-#                           MDTopAppBar:
-#                               title: "Title"
-#                               icon: "reload"
-#                               type: "bottom"
-#                               left_action_items:  [['menu', lambda x: nav_drawer.set_state("open")]]
-#                               on_action_button: app.restart()
-#                               mode: "end"
-#           MDNavigationDrawer:
-#               id: nav_drawer
-
-
-#   """
-
 qu1 = """
   query
 AllBirthdays{
@@ -102,6 +71,7 @@ class CarouselWidget(BoxLayout):
         carr = Carousel(direction='right',
             size_hint= (1,1),
             loop =True)
+        carr.id = "carousel"
         
         for i in range(len(birthdays)):
             box_iter = BoxLayout(orientation = 'vertical')  
@@ -113,6 +83,7 @@ class CarouselWidget(BoxLayout):
             carr.add_widget(box_iter)
         
         self.add_widget(carr)
+
 class ContentNavigationDrawer(MDBoxLayout):
     screen_manager = ObjectProperty()
     nav_drawer = ObjectProperty()
@@ -136,10 +107,8 @@ class DemoApp(MDApp):
     def restart(self):
         print(self.root.ids.caro.children[0]._get_index())
         self.root.ids.caro.children[0].index = 0
-        #self.root.ids.caro.bind(index = 0)
-
-
-        #print(self.root.ids.caro.index)
-
-        #self.root.ids.caro.load_slide()
+    def add_birthdays(self, entry):
+        
+        
+        
 DemoApp().run()
