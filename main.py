@@ -108,6 +108,7 @@ class DemoApp(MDApp):
         print(self.root.ids.caro.children[0]._get_index())
         self.root.ids.caro.children[0].index = 0
     def add_birthdays(self, entry):
+        return 1
         
         
         
