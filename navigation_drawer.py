@@ -45,7 +45,28 @@ KV = """
             
                 IconLeftWidget:
                     icon: "logout"
-                    
+ 
+
+<ClickableTextFieldRound>:
+    size_hint_y: None
+    height: text_field.height
+    size_hint_x: .7
+    pos_hint: {"center_x": .5, "center_y": .4}                            
+    MDTextField:
+        id: text_field
+        hint_text: root.hint_text
+        text: root.text
+        mode:'rectangle' 
+
+    MDIconButton:
+        icon: "calendar"
+        pos_hint: {"center_y": .5}
+        pos: text_field.width - self.width + dp(8), 0
+        theme_text_color: "Hint"
+        on_release:
+            #self.icon = "eye" if self.icon == "eye-off" else "eye-off"
+            #text_field.password = False if text_field.password is True else True
+            app.show_date_picker()
 
 
 Screen:
@@ -96,12 +117,21 @@ Screen:
                             mode:'rectangle'
                             pos_hint: {'x':0.15, 'y':0.6}
                             size_hint_x : .7
-                        MDTextField:
+                        ClickableTextFieldRound:
                             id:birthday
+                            #size_hint_x: None
                             hint_text: "Birthday"
-                            pos_hint: {'x':0.15, 'y':0.4}
-                            mode:'rectangle'
-                            size_hint_x : .7
+#                       MDRaisedButton:
+#                           id:birthday
+#                           text:'Birthday'
+#                           pos_hint: {'x':0.15, 'y':0.4}
+#                           on_release: app.show_date_picker()
+                        MDRaisedButton:
+                            id: AddButton
+                            text:"Add Entry"
+                            md_bg_color:0.5,0.8,0.7,1
+                            pos_hint: {'x':0.15, 'y':0.2}
+                            on_release:app.add_birthdays([root.ids.name.text, root.ids.birthday.text])
             MDNavigationDrawer:
                 
 
